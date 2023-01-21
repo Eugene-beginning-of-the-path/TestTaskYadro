@@ -32,12 +32,6 @@ void parsingLine(std::string const& line, std::vector<std::string>& wordsOfLine,
         end = line.find(devider, start);
         wordsOfLine.push_back(line.substr(start, end - start));
     }
-
-    /*while ((start = lineCSV.find_first_not_of(devider, end)) != std::string::npos)
-    {
-        end = lineCSV.find(devider, start);
-        wordsOfLine.push_back(lineCSV.substr(start, end - start));
-    }*/
     
     //элемент контейнера, содержит информацию о том, что предыдущие элементы
     //контейнера были взяты из единой строки .CSV
@@ -100,3 +94,16 @@ int main()
 
 }
 
+/*
+Данные:
+    Указатель на файл (std::fstream)
+    Название файла .CSV (std::string)
+    Вектор для хранения полей .CSV файла
+    Вектор для хранения полей в каждой строке .CSV
+
+Методы:
+    Парсинг строки
+    Получение значения ячейки по координатам
+    Вывод в консоль полей .CSV файла
+    Тесты ошибочных ситуаций
+*/
