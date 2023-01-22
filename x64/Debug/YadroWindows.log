@@ -1,2 +1,8 @@
 ﻿  main.cpp
-  YadroWindows.vcxproj -> D:\Codding\YadroWindows\x64\Debug\YadroWindows.exe
+D:\Codding\YadroVS\main.cpp(39,16): warning C4101: end: неиспользованная локальная переменная
+D:\Codding\YadroVS\main.cpp(115,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
+          with
+          [
+              _Ty=int
+          ]
+  YadroWindows.vcxproj -> D:\Codding\YadroVS\x64\Debug\YadroWindows.exe
