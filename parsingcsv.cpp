@@ -3,18 +3,15 @@
 
 struct XY
 {
-    size_t x;
-    size_t y;
+    size_t x = -1;
+    size_t y = -1;
 };
 
 void pars::parsingCSV::replaceByValue(std::string& operand)
 {
-    //Будем сохранять координаты значения, которое подставим вместо полученного операнда. 
-    //К примеру "Cell30".
     XY xy; 
     size_t index = 0;
 
-    //Ищем столбец
     for (size_t i = 0; i < countColumnsInRow[0]; i++)
     {
         index = operand.find(fieldsOfCSV[i]);
@@ -25,7 +22,6 @@ void pars::parsingCSV::replaceByValue(std::string& operand)
         }
     }
 
-    //Ищем строку
     for (size_t i = countColumnsInRow[0]+1; i < fieldsOfCSV.size(); i+= countColumnsInRow[0]+1)
     {
         index = operand.find(fieldsOfCSV[i]);
@@ -36,12 +32,13 @@ void pars::parsingCSV::replaceByValue(std::string& operand)
         }
     }
 
-    //std::cout << xy.x << '\t' << xy.y << '\t' << fieldsOfCSV[xy.x + xy.y] << std::endl;
-    operand = fieldsOfCSV[xy.x + xy.y];
+    if (xy.x == -1 || xy.y == -1)
+        throw("Operand of a formula has invalid reference to value");
+    else
+        operand = fieldsOfCSV[xy.x + xy.y];    
 
 }
 
-//Метод для вычисления поля с формулой
 std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
 {
     std::vector<std::string> operands;
@@ -69,8 +66,6 @@ std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
     //return "temp";
 }
 
-//Каждое поле после парсинга, полученное из файла .CSV, проверяется на ряд условий и
-//исправлении, к примеру, если это формула для подсчета значения поля
 void pars::parsingCSV::analysisFields()
 {
     for (auto& el : fieldsOfCSV)
@@ -96,59 +91,56 @@ pars::parsingCSV::parsingCSV(std::string nameFile) : nameFile(nameFile)
 
 void pars::parsingCSV::parsingLinesCSV(const char devider)
 {
-    //Будем хранить строку из файла .CSV
     std::string line;
+    size_t countRows = 0;
 
     while (!fileRead.eof())
     {
         fileRead >> line;
 
-        size_t index = line.find(devider);
+        //size_t index = line.find(devider);
         size_t countColumns = 0;
 
-        if (index == 0) //значит первая ячейка пуста !!!! ,,?
+        if (line.find(devider) == 0) //значит первая ячейка пуста !!!! ,,?
         {
-            std::cout << "__the field is NULL" << std::endl << std::endl;
+            //std::cout << "__the field is NULL" << std::endl << std::endl;
             fieldsOfCSV.push_back("///");
             countColumns++;
         }
 
+        
+
         size_t start;
         size_t end = 0;
-        std::string field;
+        int preEnd = -2;
 
         while ((start = line.find_first_not_of(devider, end)) != std::string::npos)
         {
             end = line.find(devider, start);
-            //field = line.substr(start, end - start);
             fieldsOfCSV.push_back(line.substr(start, end - start));
             countColumns++;
         }
-
-        //элемент контейнера, содержит информацию "/endLine/" о том, 
-        //что предыдущие элементы контейнера были взяты из единой строки .CSV 
+ 
         fieldsOfCSV.push_back("/endLine/");
 
         countColumnsInRow.push_back(countColumns);
-
-        //!!!!!!!!!Метод тестов вызывается здесь!!!!!!!!!
-        //! 
-        auto tempEl = countColumnsInRow[0];
-        //Проверка на формат таблицы .CSV (одинаковое ли кол-во столбцов в каждой строке)
-        for (auto el : countColumnsInRow)
-        {
-            if (!(tempEl == el))
-                throw("The rows of .CSV file have different number counter");
-            else
-                tempEl = el;
-        }
+        countRows++;
 
     }
+
+    auto tempEl = countColumnsInRow[0];
+    for (auto el : countColumnsInRow)
+    {
+        if (!(tempEl == el))
+            throw("The format .CSV file is invalid, because the file has different number counter");
+        else
+            tempEl = el;
+    }
+
     analysisFields();
   
 }
 
-//Метод для представления обработанных полей из файла .CSV 
 void pars::parsingCSV::showFields() const
 {
     size_t plus = countColumnsInRow[2] + 1;
@@ -165,8 +157,18 @@ void pars::parsingCSV::showFields() const
             continue;
         }
 
-        std::cout << fieldsOfCSV[i];
-        std::cout << ",";
+        if (fieldsOfCSV[i] == "///")
+        {
+            std::cout << ',';
+            continue;
+        }
+            
+        if ((i + 1) % endline == 0)
+        {
+            std::cout << fieldsOfCSV[i];
+            continue;
+        }
 
+        std::cout << fieldsOfCSV[i] << ',';
     }
 }
