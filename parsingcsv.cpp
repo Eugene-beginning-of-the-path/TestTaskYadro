@@ -1,4 +1,5 @@
 #include <iostream>
+#include <array>
 #include "parsingcsv.h"
 
 struct XY
@@ -27,8 +28,12 @@ void pars::parsingCSV::replaceByValue(std::string& operand)
         index = operand.find(fieldsOfCSV[i]);
         if (index != std::string::npos)
         {
-            xy.y = i;
-            break;
+            int value = std::stoi(operand.substr(index));
+            if (std::to_string(value) == fieldsOfCSV[i])
+            {
+                xy.y = i;
+                break;
+            }
         }
     }
 
@@ -55,28 +60,47 @@ std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
 
     replaceByValue(operands[0]);
     replaceByValue(operands[1]);
-    //std::cout << operands[0] << '\t' << operands[1] << std::endl;
+
     return std::to_string(std::stoi(operands[0]) + std::stoi(operands[1]));
 
-    /*std::string line = "Cell30";
-    size_t ind = line.find(fieldsOfCSV[15]);
-    if (ind == (size_t)-1)
-        std::cout << "###" << std::endl;*/
-
-    //return "temp";
 }
 
 void pars::parsingCSV::analysisFields()
 {
-    for (auto& el : fieldsOfCSV)
+    std::vector<int> lineNumber;
+    lineNumber.reserve(countColumnsInRow[0]);
+
+    for (size_t i = 0; i < fieldsOfCSV.size(); i++)
     {
-        if (el[0] == '=') //если текущее поле - формула
+        if (fieldsOfCSV[i][0] == '=') 
         {
-            el = el.substr(1);
-            el = calculateFormula(el);
-            //std::cout << el << std::endl;
+            fieldsOfCSV[i] = fieldsOfCSV[i].substr(1);
+            fieldsOfCSV[i] = calculateFormula(fieldsOfCSV[i]);
+        }
+
+        if (i != 0 && i % (countColumnsInRow[0] + 1) == 0)
+            lineNumber.push_back(std::stoi(fieldsOfCSV[i]));
+        
+    }
+    
+    for (auto el : lineNumber)
+    {
+        if (el <= 0)
+            throw("One of the line numbers is less than or eaual to zero");
+
+        int count = 0;
+        int value = el;
+        for (auto el_ : lineNumber)
+        {
+            if (el_ == value)
+            {
+                count++;
+                if (count == 2)
+                    throw("One of the line numbers is repeated");
+            }   
         }
     }
+    
 }
 
 pars::parsingCSV::parsingCSV(std::string nameFile) : nameFile(nameFile)
