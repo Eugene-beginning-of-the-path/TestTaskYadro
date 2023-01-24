@@ -11,11 +11,11 @@ namespace pars
 		class exceptParsCSV : public std::exception
 		{
 			private:
-				pars::parsingCSV& ob_;
+				std::string field_;
 
 			public:
-				exceptParsCSV(const char* text, pars::parsingCSV& ob);
-				void closeCSV();
+				exceptParsCSV(const char* text, std::string field);
+				void info() const ;
 				~exceptParsCSV() = default;
 		};
 	}

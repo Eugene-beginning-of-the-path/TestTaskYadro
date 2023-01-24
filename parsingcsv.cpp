@@ -1,17 +1,10 @@
 #include <iostream>
 #include <array>
+#include "exceptions.h"
 #include "parsingcsv.h"
 
-struct XY
-{
-public:
-    size_t x = -1;
-    size_t y = -1;
-};
-
 void pars::parsingCSV::replaceByValue(std::string& operand)
-{
-    XY xy; 
+{ 
     size_t index = 0;
 
     for (size_t i = 0; i < countColumns; i++)
@@ -39,7 +32,7 @@ void pars::parsingCSV::replaceByValue(std::string& operand)
     }
 
     if (xy.x == -1 || xy.y == -1)
-        throw("Operand of a formula has invalid reference to value");
+        throw pars::exc::exceptParsCSV("Operand of a formula has invalid reference to value", operand);
     else
         operand = fieldsCSV[xy.x + xy.y];    
 
@@ -52,8 +45,7 @@ std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
 
     size_t indexOfOperator = fieldFormula.find_first_of("+-*/");
     if (indexOfOperator == std::string::npos)
-        throw("The field with formuala =" + fieldFormula + " has no operand");
-    //std::cout << fieldFormula[indexOfOperator] << std::endl;
+        throw pars::exc::exceptParsCSV("The field with formuala has no operand", fieldFormula);
 
     //operands = parsingFormula(fieldFormula, indexOfOperator);
     operands.push_back(fieldFormula.substr(0, indexOfOperator - 0));
@@ -80,7 +72,7 @@ std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
     case '/':
     {
         if (std::stoi(operands[1]) == 0)
-            throw("Can not devide by zero");
+            throw pars::exc::exceptParsCSV("Can not devide by zero", fieldFormula);
         else
             result = std::stoi(operands[0]) / std::stoi(operands[1]);
         break;
@@ -96,23 +88,15 @@ void pars::parsingCSV::analysisFields()
     vecint lineNumber;
     lineNumber.reserve(countColumns);
 
-    for (size_t i = 0; i < fieldsCSV.size(); i++)
+    for (size_t i = countColumns+1; i < fieldsCSV.size(); i+= countColumns+1)
     {
-        if (fieldsCSV[i][0] == '=') 
-        {
-            fieldsCSV[i] = fieldsCSV[i].substr(1);
-            fieldsCSV[i] = calculateFormula(fieldsCSV[i]);
-        }
-
-        if (i != 0 && i % (countColumns + 1) == 0)
-            lineNumber.push_back(std::stoi(fieldsCSV[i]));
-        
+        lineNumber.push_back(std::stoi(fieldsCSV[i]));
     }
-    
+
     for (auto el : lineNumber)
     {
         if (el <= 0)
-            throw("One of the line numbers is less than or eaual to zero");
+            throw std::exception("Information: One of the line numbers is less than or equal to zero");
 
         int count = 0;
         int value = el;
@@ -122,8 +106,22 @@ void pars::parsingCSV::analysisFields()
             {
                 count++;
                 if (count == 2)
-                    throw("One of the line numbers is repeated");
-            }   
+                    throw std::exception("Information: One of the line numbers is repeated");
+            }
+        }
+    }
+
+    for (size_t i = 0; i < fieldsCSV.size(); i++)
+    {
+        /*if (i > countColumns)
+        {
+            std::cout << typeid(std::stoi(fieldsCSV[i])).name();
+        }*/
+
+        if (fieldsCSV[i][0] == '=')
+        {
+            fieldsCSV[i] = fieldsCSV[i].substr(1);
+            fieldsCSV[i] = calculateFormula(fieldsCSV[i]);
         }
     }
     
@@ -135,7 +133,7 @@ pars::parsingCSV::parsingCSV(std::string nameFile) : nameFile(nameFile)
 
     if (!fileRead.is_open())
     {
-        throw("Could not open file " + nameFile);
+        throw std::exception("Information: Could not open file");
     }
 };
 
@@ -182,7 +180,7 @@ void pars::parsingCSV::parsingLinesCSV(const char devider)
     for (auto el : countColumnsInRows)
     {
         if (!(tempEl == el))
-            throw("The format .CSV file is invalid, because the file has different number counter");
+            throw std::exception("Information: The format .CSV file is invalid, because the file has different number counter");
         else
             tempEl = el;
     }

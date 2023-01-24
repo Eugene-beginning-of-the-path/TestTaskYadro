@@ -1,8 +1,11 @@
 #include "exceptions.h"
+#include <iostream>
+pars::exc::exceptParsCSV::exceptParsCSV(const char* text, std::string field) : exception(text), field_(field) { }
 
-pars::exc::exceptParsCSV::exceptParsCSV(const char* text, parsingCSV& ob) : exception(text), ob_(ob){}
-
-void pars::exc::exceptParsCSV::closeCSV()
+void pars::exc::exceptParsCSV::info() const
 {
-	ob_.~parsingCSV();
+	std::cout << "Information: " << std::exception::what() << std::endl;
+	std::cout << "The field with problem: " << field_ << std::endl;
 }
+
+

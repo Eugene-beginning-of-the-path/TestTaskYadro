@@ -10,15 +10,22 @@ namespace pars
     typedef std::vector<std::string> vecstr;
     typedef std::vector<int> vecint;
 
+    struct XY
+    {
+    public:
+        size_t x = -1;
+        size_t y = -1;
+    };
+
     class parsingCSV
     {
     private:
-
         std::fstream fileRead;
         const std::string nameFile;
         vecstr fieldsCSV;
         vecint countColumnsInRows;
         int countColumns = -1;
+        XY xy;
 
         void replaceByValue(std::string& operand);
 

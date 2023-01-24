@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include "parsingcsv.h"
-//#include <iomanip>
+#include "exceptions.h"
 
 void read_record(std::string nameFile)
 {
@@ -10,9 +10,13 @@ void read_record(std::string nameFile)
         pars.parsingLinesCSV();
         pars.showFields();
     }
-    catch (...)
+    catch (pars::exc::exceptParsCSV& ob)
     {
-
+        ob.info();
+    }
+    catch (std::exception& ob)
+    {
+        std::cout << ob.what() << std::endl;
     }
 }
 
