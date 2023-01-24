@@ -1,2 +1,3 @@
 D:\Codding\YadroWindows\x64\Debug\YadroWindows.exe
 D:\Codding\YadroVS\x64\Debug\YadroWindows.exe
+D:\Repositories\YadroWindows\x64\Debug\YadroWindows.exe

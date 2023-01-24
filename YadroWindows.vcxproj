@@ -43,7 +43,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="exceptions.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parsingcsv.cpp" />
   </ItemGroup>
@@ -134,6 +135,7 @@
     <None Include="card.csv" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="exceptions.h" />
     <ClInclude Include="parsingcsv.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

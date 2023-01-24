@@ -21,6 +21,9 @@
     <ClCompile Include="parsingcsv.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="exceptions.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="card.csv">
@@ -29,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parsingcsv.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
   </ItemGroup>

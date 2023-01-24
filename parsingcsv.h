@@ -1,17 +1,24 @@
+#ifndef PARSINGCSV_H
+#define PARSINGCSV_H
+
+#include <fstream>
 #include <vector>
 #include <string>
-#include <fstream>
 
 namespace pars
 {
+    typedef std::vector<std::string> vecstr;
+    typedef std::vector<int> vecint;
+
     class parsingCSV
     {
     private:
+
         std::fstream fileRead;
         const std::string nameFile;
-        std::vector<std::string> fieldsOfCSV;
-        std::vector<int> countColumnsInRow;
-        //std::size_t countColumn;
+        vecstr fieldsCSV;
+        vecint countColumnsInRows;
+        int countColumns = -1;
 
         void replaceByValue(std::string& operand);
 
@@ -21,16 +28,16 @@ namespace pars
         //исправлении, к примеру, если это формула для подсчета значения поля
         void analysisFields();
 
-
-
     public:
         parsingCSV(std::string nameFile);
-
 
         void parsingLinesCSV(const char devider = ',');
 
         //Метод для представления обработанных полей из файла .CSV 
         void showFields() const;
 
+        ~parsingCSV() { fileRead.close(); }
     };
 }
+
+#endif

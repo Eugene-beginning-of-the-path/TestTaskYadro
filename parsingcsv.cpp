@@ -4,6 +4,7 @@
 
 struct XY
 {
+public:
     size_t x = -1;
     size_t y = -1;
 };
@@ -13,9 +14,9 @@ void pars::parsingCSV::replaceByValue(std::string& operand)
     XY xy; 
     size_t index = 0;
 
-    for (size_t i = 0; i < countColumnsInRow[0]; i++)
+    for (size_t i = 0; i < countColumns; i++)
     {
-        index = operand.find(fieldsOfCSV[i]);
+        index = operand.find(fieldsCSV[i]);
         if (index != std::string::npos)
         {
             xy.x = i;
@@ -23,13 +24,13 @@ void pars::parsingCSV::replaceByValue(std::string& operand)
         }
     }
 
-    for (size_t i = countColumnsInRow[0]+1; i < fieldsOfCSV.size(); i+= countColumnsInRow[0]+1)
+    for (size_t i = countColumns+1; i < fieldsCSV.size(); i += countColumns+1)
     {
-        index = operand.find(fieldsOfCSV[i]);
+        index = operand.find(fieldsCSV[i]);
         if (index != std::string::npos)
         {
             int value = std::stoi(operand.substr(index));
-            if (std::to_string(value) == fieldsOfCSV[i])
+            if (std::to_string(value) == fieldsCSV[i])
             {
                 xy.y = i;
                 break;
@@ -40,13 +41,13 @@ void pars::parsingCSV::replaceByValue(std::string& operand)
     if (xy.x == -1 || xy.y == -1)
         throw("Operand of a formula has invalid reference to value");
     else
-        operand = fieldsOfCSV[xy.x + xy.y];    
+        operand = fieldsCSV[xy.x + xy.y];    
 
 }
 
 std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
 {
-    std::vector<std::string> operands;
+    vecstr operands;
     operands.reserve(2);
 
     size_t indexOfOperator = fieldFormula.find_first_of("+-*/");
@@ -61,25 +62,50 @@ std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
     replaceByValue(operands[0]);
     replaceByValue(operands[1]);
 
-    return std::to_string(std::stoi(operands[0]) + std::stoi(operands[1]));
+    int result;
+    switch (fieldFormula[indexOfOperator])
+    {
+    case '+':
+        result = std::stoi(operands[0]) + std::stoi(operands[1]);
+        break;
+
+    case '-':
+        result = std::stoi(operands[0]) - std::stoi(operands[1]);
+        break;
+
+    case '*':
+        result = std::stoi(operands[0]) * std::stoi(operands[1]);
+        break;
+
+    case '/':
+    {
+        if (std::stoi(operands[1]) == 0)
+            throw("Can not devide by zero");
+        else
+            result = std::stoi(operands[0]) / std::stoi(operands[1]);
+        break;
+    }
+    }
+
+    return std::to_string(result);
 
 }
 
 void pars::parsingCSV::analysisFields()
 {
-    std::vector<int> lineNumber;
-    lineNumber.reserve(countColumnsInRow[0]);
+    vecint lineNumber;
+    lineNumber.reserve(countColumns);
 
-    for (size_t i = 0; i < fieldsOfCSV.size(); i++)
+    for (size_t i = 0; i < fieldsCSV.size(); i++)
     {
-        if (fieldsOfCSV[i][0] == '=') 
+        if (fieldsCSV[i][0] == '=') 
         {
-            fieldsOfCSV[i] = fieldsOfCSV[i].substr(1);
-            fieldsOfCSV[i] = calculateFormula(fieldsOfCSV[i]);
+            fieldsCSV[i] = fieldsCSV[i].substr(1);
+            fieldsCSV[i] = calculateFormula(fieldsCSV[i]);
         }
 
-        if (i != 0 && i % (countColumnsInRow[0] + 1) == 0)
-            lineNumber.push_back(std::stoi(fieldsOfCSV[i]));
+        if (i != 0 && i % (countColumns + 1) == 0)
+            lineNumber.push_back(std::stoi(fieldsCSV[i]));
         
     }
     
@@ -128,7 +154,7 @@ void pars::parsingCSV::parsingLinesCSV(const char devider)
         if (line.find(devider) == 0) //значит перва€ €чейка пуста !!!! ,,?
         {
             //std::cout << "__the field is NULL" << std::endl << std::endl;
-            fieldsOfCSV.push_back("///");
+            fieldsCSV.push_back("///");
             countColumns++;
         }
 
@@ -141,19 +167,19 @@ void pars::parsingCSV::parsingLinesCSV(const char devider)
         while ((start = line.find_first_not_of(devider, end)) != std::string::npos)
         {
             end = line.find(devider, start);
-            fieldsOfCSV.push_back(line.substr(start, end - start));
+            fieldsCSV.push_back(line.substr(start, end - start));
             countColumns++;
         }
  
-        fieldsOfCSV.push_back("/endLine/");
+        fieldsCSV.push_back("/endLine/");
 
-        countColumnsInRow.push_back(countColumns);
+        countColumnsInRows.push_back(countColumns);
         countRows++;
 
     }
 
-    auto tempEl = countColumnsInRow[0];
-    for (auto el : countColumnsInRow)
+    auto tempEl = countColumnsInRows[0];
+    for (auto el : countColumnsInRows)
     {
         if (!(tempEl == el))
             throw("The format .CSV file is invalid, because the file has different number counter");
@@ -161,18 +187,20 @@ void pars::parsingCSV::parsingLinesCSV(const char devider)
             tempEl = el;
     }
 
+    countColumns = countColumnsInRows[0];
+
     analysisFields();
   
 }
 
 void pars::parsingCSV::showFields() const
 {
-    size_t plus = countColumnsInRow[2] + 1;
-    size_t endline = countColumnsInRow[2];
+    size_t plus = countColumns + 1;
+    size_t endline = countColumns;
 
     std::cout << "Perpesintation of field .CSV file(" << nameFile << "): "
         << std::endl;
-    for (size_t i = 0; i < fieldsOfCSV.size(); i++)
+    for (size_t i = 0; i < fieldsCSV.size(); i++)
     {
         if (i != 0 && i % endline == 0)
         {
@@ -181,7 +209,7 @@ void pars::parsingCSV::showFields() const
             continue;
         }
 
-        if (fieldsOfCSV[i] == "///")
+        if (fieldsCSV[i] == "///")
         {
             std::cout << ',';
             continue;
@@ -189,10 +217,10 @@ void pars::parsingCSV::showFields() const
             
         if ((i + 1) % endline == 0)
         {
-            std::cout << fieldsOfCSV[i];
+            std::cout << fieldsCSV[i];
             continue;
         }
 
-        std::cout << fieldsOfCSV[i] << ',';
+        std::cout << fieldsCSV[i] << ',';
     }
 }

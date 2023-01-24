@@ -2,19 +2,23 @@
 #include "parsingcsv.h"
 //#include <iomanip>
 
-
 void read_record(std::string nameFile)
 {
-    pars::parsingCSV pars(nameFile);
-    pars.parsingLinesCSV();
-    pars.showFields();
-    
+    try 
+    {
+        pars::parsingCSV pars(nameFile);
+        pars.parsingLinesCSV();
+        pars.showFields();
+    }
+    catch (...)
+    {
+
+    }
 }
 
 int main()
 {
     read_record("card.csv");
-
 }
 
 /*
