@@ -1,8 +1,2 @@
-﻿  parsingcsv.cpp
-D:\Repositories\YadroWindows\parsingcsv.cpp(118,63): error C2760: syntax error: unexpected token ';', expected ')'
-D:\Repositories\YadroWindows\parsingcsv.cpp(119,9): error C2143: syntax error: missing ';' before '}'
-D:\Repositories\YadroWindows\parsingcsv.cpp(174,50): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
-          with
-          [
-              _Ty=int
-          ]
+﻿  main.cpp
+  YadroWindows.vcxproj -> D:\Repositories\YadroWindows\x64\Debug\YadroWindows.exe

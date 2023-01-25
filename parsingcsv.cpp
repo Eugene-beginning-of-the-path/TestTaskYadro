@@ -1,19 +1,24 @@
 #include <iostream>
-#include <array>
 #include "exceptions.h"
 #include "parsingcsv.h"
 
 void pars::parsingCSV::replaceByValue(std::string& operand)
 { 
     size_t index = 0;
-
+    xy.x = -1;
+    xy.y = -1;
     for (size_t i = 0; i < countColumns; i++)
     {
         index = operand.find(fieldsCSV[i]);
         if (index != std::string::npos)
         {
-            xy.x = i;
-            break;
+            std::string col = operand.substr(0, fieldsCSV[i].size());
+            if ((col == fieldsCSV[i]) && ((48 <= operand[col.size()]) && (operand[col.size()] <=57)))
+            {
+                xy.x = i;
+                break;
+            }
+
         }
     }
 
@@ -86,9 +91,9 @@ std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
 void pars::parsingCSV::analysisFields()
 {
     vecint lineNumber;
-    lineNumber.reserve(countColumns);
+    //lineNumber.reserve(countColumns);
 
-    for (size_t i = countColumns+1; i < fieldsCSV.size(); i+= countColumns+1)
+    for (size_t i = countColumns+1; i < fieldsCSV.size()-countColumns; i+= countColumns+1)
     {
         lineNumber.push_back(std::stoi(fieldsCSV[i]));
     }
@@ -140,7 +145,6 @@ pars::parsingCSV::parsingCSV(std::string nameFile) : nameFile(nameFile)
 void pars::parsingCSV::parsingLinesCSV(const char devider)
 {
     std::string line;
-    size_t countRows = 0;
 
     while (!fileRead.eof())
     {
@@ -156,11 +160,8 @@ void pars::parsingCSV::parsingLinesCSV(const char devider)
             countColumns++;
         }
 
-        
-
         size_t start;
         size_t end = 0;
-        int preEnd = -2;
 
         while ((start = line.find_first_not_of(devider, end)) != std::string::npos)
         {
@@ -170,10 +171,7 @@ void pars::parsingCSV::parsingLinesCSV(const char devider)
         }
  
         fieldsCSV.push_back("/endLine/");
-
         countColumnsInRows.push_back(countColumns);
-        countRows++;
-
     }
 
     auto tempEl = countColumnsInRows[0];

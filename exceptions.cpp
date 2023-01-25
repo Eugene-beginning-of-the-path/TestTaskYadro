@@ -1,5 +1,6 @@
-#include "exceptions.h"
 #include <iostream>
+#include "exceptions.h"
+
 pars::exc::exceptParsCSV::exceptParsCSV(const char* text, std::string field) : exception(text), field_(field) { }
 
 void pars::exc::exceptParsCSV::info() const
