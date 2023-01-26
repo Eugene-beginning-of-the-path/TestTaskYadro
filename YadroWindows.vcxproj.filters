@@ -18,7 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\temp\temp.cpp">
+    <ClCompile Include="parsingcsv.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="exceptions.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,5 +29,13 @@
     <None Include="card.csv">
       <Filter>Исходные файлы</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="parsingcsv.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions.h">
+      <Filter>Исходные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
