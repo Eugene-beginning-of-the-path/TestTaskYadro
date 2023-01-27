@@ -2,6 +2,7 @@
 #include "exceptions.h"
 #include "parsingcsv.h"
 
+//The method is replacing operand of formula with some value from .CSV fields 
 void pars::parsingCSV::replaceByValue(std::string& operand)
 { 
     size_t index = 0;
@@ -43,6 +44,8 @@ void pars::parsingCSV::replaceByValue(std::string& operand)
 
 }
 
+//If a field has a formula, than the field will be parsed into operands and an 
+//operator and replaced on some value
 std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
 {
     vecstr operands;
@@ -88,10 +91,10 @@ std::string pars::parsingCSV::calculateFormula(std::string fieldFormula)
 
 }
 
+//The method for testing fields of .CSV on a number of conditions 
 void pars::parsingCSV::analysisFields()
 {
     vecint lineNumber;
-    //lineNumber.reserve(countColumns);
 
     for (size_t i = countColumns+1; i < fieldsCSV.size()-countColumns; i+= countColumns+1)
     {
@@ -118,11 +121,6 @@ void pars::parsingCSV::analysisFields()
 
     for (size_t i = 0; i < fieldsCSV.size(); i++)
     {
-        /*if (i > countColumns)
-        {
-            std::cout << typeid(std::stoi(fieldsCSV[i])).name();
-        }*/
-
         if (fieldsCSV[i][0] == '=')
         {
             fieldsCSV[i] = fieldsCSV[i].substr(1);
@@ -132,6 +130,7 @@ void pars::parsingCSV::analysisFields()
     
 }
 
+//The constructor gets the .CSV file
 pars::parsingCSV::parsingCSV(std::string nameFile) : nameFile(nameFile)
 {
     fileRead.open(nameFile, std::ios::in);
@@ -142,6 +141,7 @@ pars::parsingCSV::parsingCSV(std::string nameFile) : nameFile(nameFile)
     }
 };
 
+//The method for reading .CSV file and saving its fields
 void pars::parsingCSV::parsingLinesCSV(const char devider)
 {
     std::string line;
@@ -150,12 +150,10 @@ void pars::parsingCSV::parsingLinesCSV(const char devider)
     {
         fileRead >> line;
 
-        //size_t index = line.find(devider);
         size_t countColumns = 0;
 
-        if (line.find(devider) == 0) //������ ������ ������ ����� !!!! ,,?
+        if (line.find(devider) == 0) 
         {
-            //std::cout << "__the field is NULL" << std::endl << std::endl;
             fieldsCSV.push_back("///");
             countColumns++;
         }
@@ -189,6 +187,7 @@ void pars::parsingCSV::parsingLinesCSV(const char devider)
   
 }
 
+//The method for presentation fields of .CSV file
 void pars::parsingCSV::showFields() const
 {
     size_t plus = countColumns + 1;
